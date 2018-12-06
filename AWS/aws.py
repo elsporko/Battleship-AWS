@@ -80,3 +80,6 @@ class AWS(object):
 
         self.sqs.set_queue_attributes(QueueUrl=self.queue['QueueUrl'], Attributes={'Policy': json.dumps(self.policy)})
         return True
+
+    def receive_message(self, MaxNumberOfMessages=1, WaitTimeSeconds=20, VisibilityTimeout=10):
+        return aws.receive_message(QueueUrl=self.queue['QueueUrl'],MaxNumberOfMessages=MaxNumberOfMessages, WaitTimeSeconds=WaitTimeSeconds, VisibilityTimeout=VisibilityTimeout)
