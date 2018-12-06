@@ -82,4 +82,4 @@ class AWS(object):
         return True
 
     def receive_message(self, MaxNumberOfMessages=1, WaitTimeSeconds=20, VisibilityTimeout=10):
-        return aws.receive_message(QueueUrl=self.queue['QueueUrl'],MaxNumberOfMessages=MaxNumberOfMessages, WaitTimeSeconds=WaitTimeSeconds, VisibilityTimeout=VisibilityTimeout)
+        return self.sqs.receive_message(QueueUrl=self.queue['QueueUrl'],MaxNumberOfMessages=MaxNumberOfMessages, WaitTimeSeconds=WaitTimeSeconds, VisibilityTimeout=VisibilityTimeout)
