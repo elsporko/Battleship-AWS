@@ -1,7 +1,6 @@
 import boto3
 import json
 import sys
-#import policy
 
 """
 Module to help facilitate calls to AWS SNS/SQS
@@ -85,4 +84,4 @@ class AWS(object):
         return True
 
     def receive_message(self, MaxNumberOfMessages=1, WaitTimeSeconds=20, VisibilityTimeout=10):
-        return self.sqs.receive_message(QueueUrl=self.queue['QueueUrl'],MaxNumberOfMessages=MaxNumberOfMessages, WaitTimeSeconds=WaitTimeSeconds, VisibilityTimeout=VisibilityTimeout)
+        return aws.receive_message(QueueUrl=self.queue.['QueueUrl'],MaxNumberOfMessages=MaxNumberOfMessages, WaitTimeSeconds=WaitTimeSeconds, VisibilityTimeout=VisibilityTimeout)
