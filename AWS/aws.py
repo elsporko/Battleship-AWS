@@ -9,8 +9,8 @@ Module to help facilitate calls to AWS SNS/SQS
 class AWS(object):
     """Container to handle interactions with AWS"""
     def __init__(self):
-        self.sns = boto3.client('sns')
-        self.sqs = boto3.client('sqs')
+        self.sns = boto3.client('sns', 'us-east-2')
+        self.sqs = boto3.client('sqs', 'us-east-2')
         self.sqs_res = boto3.resource('sqs', 'us-east-2')
 
     def create_topic(self, topic_name):
@@ -34,6 +34,9 @@ class AWS(object):
         self.policy = None
         try:
             self.policy = json.loads(self.get_policy())
+            # Do not bother adding a new policy if there is one in place for this topic already
+            if self.topic_name in [s['Sid'] for s in self.policy['Statement']]:
+                return True
         except KeyError:
             pass
 
@@ -67,7 +70,7 @@ class AWS(object):
 
     def subscribe_to_topic(self):
         """Subscribe to the topic"""
-        self.sns.subscribe(TopicArn=self.topic_arn, Protocol='sqs', Endpoint=self.sqs_arn)
+        return self.sns.subscribe(TopicArn=self.topic_arn, Protocol='sqs', Endpoint=self.sqs_arn)
         return True
 
     def get_policy(self):
