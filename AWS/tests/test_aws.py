@@ -30,3 +30,14 @@ class TestAWS(unittest.TestCase):
         self.aws.create_topic('Test_Topic')
         self.aws.create_queue('Test_Queue')
         self.assertTrue(self.aws.subscribe_to_topic())
+
+    def test_receive_message(self):
+        """Send/receive message"""
+        my_topic = 'Test_Receive_Topic'
+        self.aws.create_topic(my_topic)
+        self.aws.create_queue('Test_Queue')
+        self.assertTrue(self.aws.subscribe_to_topic())
+        self.assertTrue(self.aws.add_policy())
+        self.aws.register_player(my_topic)
+        self.aws.send_message(my_topic, 'This is a test')
+        self.assertTrue(self.aws.receive_message())

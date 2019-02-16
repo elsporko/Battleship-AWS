@@ -11,6 +11,8 @@ class AWS(object):
         self.sns = boto3.client('sns', 'us-east-2')
         self.sqs = boto3.client('sqs', 'us-east-2')
         self.sqs_res = boto3.resource('sqs', 'us-east-2')
+        # Placeholder to store player info
+        self.players = {}
 
     def create_topic(self, topic_name):
         print("Creating topic: ", topic_name)
@@ -84,4 +86,14 @@ class AWS(object):
         return True
 
     def receive_message(self, MaxNumberOfMessages=1, WaitTimeSeconds=20, VisibilityTimeout=10):
-        return aws.receive_message(QueueUrl=self.queue['QueueUrl'],MaxNumberOfMessages=MaxNumberOfMessages, WaitTimeSeconds=WaitTimeSeconds, VisibilityTimeout=VisibilityTimeout)
+        return self.sqs.receive_message(QueueUrl=self.queue['QueueUrl'],MaxNumberOfMessages=MaxNumberOfMessages, WaitTimeSeconds=WaitTimeSeconds, VisibilityTimeout=VisibilityTimeout)
+
+    def send_message(self, topic, message):
+        return self.sns.publish(TopicArn=self.players[topic], Message=message)
+
+    def register_player(self, topic):
+        # TODO - put Amazon Id and region in a config environment
+        # determine arn
+        arn = "arn:aws:sns:us-east-2:849664249614:{}".format(topic)
+        self.players[topic] = arn
+
