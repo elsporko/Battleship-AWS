@@ -41,3 +41,13 @@ class TestAWS(unittest.TestCase):
         self.aws.register_player(my_topic)
         self.aws.send_message(my_topic, 'This is a test')
         self.assertTrue(self.aws.receive_message())
+
+    def test_send_message_to_bad_queue(self):
+        """
+        Send message to non-existant queue to make sure it handles things in an
+        elegant manner
+        """
+        my_topic = 'bad_things'
+        message = {'handle': 'eschew_obfuscation'}
+        resp = self.aws.send_message(my_topic, message)
+        self.assertFalse(resp['success'])

@@ -72,7 +72,6 @@ class AWS(object):
     def subscribe_to_topic(self):
         """Subscribe to the topic"""
         return self.sns.subscribe(TopicArn=self.topic_arn, Protocol='sqs', Endpoint=self.sqs_arn)
-        return True
 
     def get_policy(self):
         return self.sqs.get_queue_attributes(QueueUrl=self.queue['QueueUrl'], AttributeNames=['Policy'])['Attributes']['Policy']
@@ -89,7 +88,12 @@ class AWS(object):
         return self.sqs.receive_message(QueueUrl=self.queue['QueueUrl'],MaxNumberOfMessages=MaxNumberOfMessages, WaitTimeSeconds=WaitTimeSeconds, VisibilityTimeout=VisibilityTimeout)
 
     def send_message(self, topic, message):
-        return self.sns.publish(TopicArn=self.players[topic], Message=message)
+        try:
+            resp = self.sns.publish(TopicArn=self.players[topic], Message=message)
+        except KeyError:
+            return {'success': False, 'reason': 'Publishing to an unknown topic'}
+        else:
+            return {'success': True, 'reason': resp}
 
     def register_player(self, topic):
         # TODO - put Amazon Id and region in a config environment
@@ -97,3 +101,6 @@ class AWS(object):
         arn = "arn:aws:sns:us-east-2:849664249614:{}".format(topic)
         self.players[topic] = arn
 
+# TODO
+# methods to be added:
+#   * Delete Message
